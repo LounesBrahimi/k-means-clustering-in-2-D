@@ -14,6 +14,9 @@ public class DefaultTeam {
 	  ArrayList<Point> orange = new ArrayList<Point>();
 	  ArrayList<Point> noir = new ArrayList<Point>();
 	  
+	  KMeans2D kmeans2D = new KMeans2D(k, points);
+	  kmeans2D.cluster();
+	  
 	  ArrayList<ArrayList<Point>> kmeans = new ArrayList<ArrayList<Point>>();
 	  kmeans.add(rouge);
 	  kmeans.add(verte);
