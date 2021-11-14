@@ -8,21 +8,16 @@ public class DefaultTeam {
   public ArrayList<ArrayList<Point>> calculKMeans(ArrayList<Point> points) {
 	  int k = 5;
 	  
-	  ArrayList<Point> rouge = new ArrayList<Point>();
-	  ArrayList<Point> verte = new ArrayList<Point>();
-	  ArrayList<Point> jaune = new ArrayList<Point>();
-	  ArrayList<Point> orange = new ArrayList<Point>();
-	  ArrayList<Point> noir = new ArrayList<Point>();
-	  
 	  KMeans2D kmeans2D = new KMeans2D(k, points);
 	  kmeans2D.cluster();
 	  
+	  
 	  ArrayList<ArrayList<Point>> kmeans = new ArrayList<ArrayList<Point>>();
-	  kmeans.add(rouge);
-	  kmeans.add(verte);
-	  kmeans.add(jaune);
-	  kmeans.add(orange);
-	  kmeans.add(noir);
+	  kmeans.add(kmeans2D.getRouge());
+	  kmeans.add(kmeans2D.getVerte());
+	  kmeans.add(kmeans2D.getJaune());
+	  kmeans.add(kmeans2D.getOrange());
+	  kmeans.add(kmeans2D.getNoir());
     
 	  return kmeans;
   }
