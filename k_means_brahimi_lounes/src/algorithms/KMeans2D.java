@@ -31,16 +31,13 @@ public class KMeans2D {
 	private ArrayList<Point> jaune;
     private ArrayList<Point> orange;
 	private ArrayList<Point> noir;
-	  
-	private Utils utils;
-	
+	  	
 	/*
 	 * Constructor
 	 * */
 	public KMeans2D(int k, ArrayList<Point> points) {
 		this.k = k;
 		this.points = points;
-		this.utils = new Utils();
 		rouge = new ArrayList<Point>();
 		verte = new ArrayList<Point>();
 		jaune = new ArrayList<Point>();
@@ -48,6 +45,47 @@ public class KMeans2D {
 		noir = new ArrayList<Point>();
 	}
 	
+	/*
+	 * Method that execute the K-means algorithm
+	 * */
+	public void cluster() {
+		ArrayList<Point> centroidsInt = randomCentroids();
+		ArrayList<Point2D> centroids = new ArrayList<Point2D>();
+		for (int i = 0; i < centroidsInt.size(); i++) {
+			centroids.add(new Point2D.Double(centroidsInt.get(i).getX(), centroidsInt.get(i).getY()));
+		}
+        
+        // Inital total score
+        double score = -10000000000.0;
+        while(true) {
+        	cleanClusters();
+            for(Point point : points){
+                double distMin = 10000000000.0;
+                int index = -1;
+                // find the centroid at a minimum distance of the point and add it to its cluster
+                for(int i = 0; i < centroids.size(); i++){
+                    double distance = distance(centroids.get(i), new Point2D.Double(point.getX(), point.getY()));
+                    if(distance < distMin){
+                        distMin = distance;
+                        index = i;
+                    }
+                }
+                if (index >= 0) {
+                	setCouleur(index, point);
+                }
+            }            
+            centroids = regenerateCentroids();
+            double newScore = calculateScore(centroids);
+            if(newScore == score){
+                break;
+            }
+            score = newScore;
+        }
+	}
+	
+	/*
+	 * Method that select K initial centroids
+	 * */
 	public ArrayList<Point> randomCentroids() {
         ArrayList<Integer> list = new ArrayList<Integer>();
         ArrayList<Point> centroids = new ArrayList<Point>();
@@ -59,52 +97,6 @@ public class KMeans2D {
         	centroids.add(points.get(list.get(i)));
         }
         return centroids;
-	}
-	
-	
-	/*
-	 * Method that execute the K-means algorithm
-	 * */
-	public void cluster() {
-		// Select K initial centroids
-		ArrayList<Point> centroidsInt = randomCentroids();
-		ArrayList<Point2D> centroids = new ArrayList<Point2D>();
-		for (int i = 0; i < centroidsInt.size(); i++) {
-			centroids.add(new Point2D.Double(centroidsInt.get(i).getX(), centroidsInt.get(i).getY()));
-		}
-      //  System.out.println("#centroids aleatoires : "+ centroids.toString());
-        
-        // Inital total score
-        double score = -10000000000.0;
-        while(true) {
-        	cleanClusters();
-            // For each points
-            for(Point point : points){
-                double distMin = 10000000000.0;
-                int index = -1;
-                // find the centroid at a minimum distance from it and add the point to its cluster
-                for(int i = 0; i < centroids.size(); i++){
-                    double distance = utils.distance(centroids.get(i), new Point2D.Double(point.getX(), point.getY()));
-                    if(distance < distMin){
-                        distMin = distance;
-                        index = i;
-                    }
-                }
-                if (index >= 0) {
-                	setCouleur(index, point);
-                }
-            }
-            
-         //   System.out.println("## clusters : "+ toStringClusters());
-            centroids = regenerateCentroids();
-          //  System.out.println("###nouveaux centroids : "+ centroids.toString());
-            double newScore = calculateScore(centroids);
-            if(newScore == score){
-                break;
-            }
-            score = newScore;
-        }
-        System.out.println("fin");
 	}
 	
     public double calculateScore(ArrayList<Point2D> centroids){
@@ -119,7 +111,7 @@ public class KMeans2D {
         ArrayList<Point> cluster = getCouleur(index);
         double score = 0.0;
         for (Point point : cluster) {
-			score += utils.distance(new Point2D.Double(point.getX(), point.getY()), centroid);
+			score += distance(new Point2D.Double(point.getX(), point.getY()), centroid);
 		}
         return score;
     }
@@ -203,20 +195,6 @@ public class KMeans2D {
     			this.verte.toString() + "\nnoir : " +this.noir.toString() + "\norange : "
     			+ this.orange.toString();
     }
-	
-    /*
-     *  Method that generate the inital centroids that is randomly taken in the list of points 
-     *  */
-    public ArrayList<Point> initializeCentroids() {
-    	ArrayList<Point> centroids = new ArrayList<Point>();
-
-        centroids.add(this.utils.randomPoint(this.points));
-
-        for(int i=1; i<this.k; i++){
-           centroids.add(this.utils.newCentroid(points, centroids));
-        }
-        return centroids;
-    }
     
 	/*
 	 * Method that return a cluster
@@ -242,6 +220,22 @@ public class KMeans2D {
 			throw new IllegalArgumentException("Unexpected value: " + index);
 		}
 	}
+	
+	/*
+	    * Method that calculate distance euclidiean between two Points
+	    * */
+	    public double distance(Point a, Point b){
+	      	return Math.sqrt((b.getX()-a.getX())*(b.getX()-a.getX())
+	     						+ (b.getY()-a.getY())*(b.getY()-a.getY()));
+	    }
+	        
+	    /*
+	    * Method that calculate distance euclidiean between two Point2D
+	    * */
+	    public double distance(Point2D a, Point2D b){
+	      	return Math.sqrt((b.getX()-a.getX())*(b.getX()-a.getX())
+	       						+ (b.getY()-a.getY())*(b.getY()-a.getY()));
+	    }   
 
 	public ArrayList<Point> getRouge() {
 		return rouge;
