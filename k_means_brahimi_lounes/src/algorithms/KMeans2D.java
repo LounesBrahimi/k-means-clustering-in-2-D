@@ -3,11 +3,7 @@ package algorithms;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 /*
  * Class that implement the algorithm of K-means and will produce the clusters
@@ -131,8 +127,6 @@ public class KMeans2D {
      * Method that generate the centroid of a given cluster
      * */
     public Point2D generatesCentroid(int index){
-        Point centroid = new Point();
-
         ArrayList<Point> pointsInCluster = new ArrayList<Point>();
         for(Point point : this.points){
         	if (getCouleur(index).contains(point)) {
@@ -142,6 +136,9 @@ public class KMeans2D {
         return centre(pointsInCluster);
     }
     
+    /*
+     * Method that return the centre of a cluster
+     * */
     public Point2D centre(ArrayList<Point> clusters ){
         double sumX = 0;
         double sumY = 0;
@@ -152,6 +149,9 @@ public class KMeans2D {
         return new Point2D.Double(sumX/clusters.size(), sumY/clusters.size());
     }
 	
+    /*
+     * Method that clean the clusters
+     * */
     private void cleanClusters() {
     	this.jaune.clear();
     	this.noir.clear();

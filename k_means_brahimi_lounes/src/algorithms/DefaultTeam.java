@@ -9,10 +9,13 @@ public class DefaultTeam {
 	  int k = 5;
 	  
 	  KMeans2D kmeans2D = new KMeans2D(k, points);
+	  
+	  // execute the K-means algorithm
 	  kmeans2D.cluster();
 	  
 	  
 	  ArrayList<ArrayList<Point>> kmeans = new ArrayList<ArrayList<Point>>();
+	  
 	  kmeans.add(kmeans2D.getRouge());
 	  kmeans.add(kmeans2D.getVerte());
 	  kmeans.add(kmeans2D.getJaune());
@@ -35,10 +38,6 @@ public class DefaultTeam {
     ArrayList<ArrayList<Point>> kmeans = new ArrayList<ArrayList<Point>>();
     kmeans.add(rouge);
     kmeans.add(verte);
-
-    /*******************
-     * PARTIE A ECRIRE *
-     *******************/
     return kmeans;
   }
 }
