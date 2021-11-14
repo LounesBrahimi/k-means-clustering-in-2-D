@@ -2,9 +2,7 @@ package algorithms;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-
 /*
  * Class that implement the algorithm of K-means and will produce the clusters
  * */
@@ -70,13 +68,50 @@ public class KMeans2D {
             }
             
             System.out.println("## clusters : "+ toStringClusters());
+            
+            centroids = regenerateCentroids();
+            System.out.println("###nouveaux centroids : "+ centroids.toString());
             break;
-        }
-        
+        }     
 	}
+    /*
+     * Method that regenerate the list of centroids based on cluster averages
+     * */
+    public  ArrayList<Point> regenerateCentroids(){
+    	ArrayList<Point> centroids = new ArrayList<Point>();
+        for(int i=0; i < this.k; i++){
+            centroids.add(generatesCentroid(i));
+        }
+        return centroids;
+    }
+    
+    /*
+     * Method that generate the centroid of a given cluster
+     * */
+    public Point generatesCentroid(int index){
+        Point centroid = new Point();
+
+        ArrayList<Point> pointsInCluster = new ArrayList<Point>();
+        for(Point point : this.points){
+        	if (getCouleur(index).contains(point)) {
+        		pointsInCluster.add(point);	
+        	}
+        }
+        return centre(pointsInCluster);
+    }
+    
+    public Point centre(ArrayList<Point> clusters ){
+        int sumX = 0;
+        int sumY = 0;
+        for(Point cluster : clusters){
+                sumX += cluster.getX();
+                sumY += cluster.getY();
+        }
+        return new Point(sumX/clusters.size(), sumY/clusters.size());
+    }
 	
 	/*
-	 * Method that add a point in the cluster corresponding to hist index
+	 * Method that add a point in the cluster corresponding to his index
 	 * */
 	public void setCouleur(int index, Point point) {
 		switch (index) {
@@ -124,6 +159,31 @@ public class KMeans2D {
         }
         return centroids;
     }
+    
+	/*
+	 * Method that return a cluster
+	 * */
+	public ArrayList<Point> getCouleur(int index) {
+		switch (index) {
+		case 0: {
+			return this.jaune;
+		}
+		case 1: {
+			return this.noir;
+		}
+		case 2: {
+			return this.orange;
+		}
+		case 3: {
+			return this.rouge;
+		}
+		case 4: {
+			return this.verte;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + index);
+		}
+	}
 
 	public ArrayList<Point> getRouge() {
 		return rouge;

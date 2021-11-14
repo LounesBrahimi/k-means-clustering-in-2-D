@@ -3,6 +3,7 @@ package algorithms;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 /*
@@ -72,7 +73,5 @@ public class Utils {
         	return Math.sqrt((b.getX()-a.getX())*(b.getX()-a.getX())
         						+ (b.getY()-a.getY())*(b.getY()-a.getY()));
         }
-        
-
         
 }
