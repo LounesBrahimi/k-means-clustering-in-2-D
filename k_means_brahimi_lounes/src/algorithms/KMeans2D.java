@@ -2,7 +2,13 @@ package algorithms;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+
 /*
  * Class that implement the algorithm of K-means and will produce the clusters
  * */
@@ -42,43 +48,87 @@ public class KMeans2D {
 		noir = new ArrayList<Point>();
 	}
 	
+	public ArrayList<Point> randomCentroids() {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        ArrayList<Point> centroids = new ArrayList<Point>();
+        for (int i=0; i<points.size(); i++) {
+            list.add(i);
+        }
+        Collections.shuffle(list);
+        for (int i=0; i<k; i++) {
+        	centroids.add(points.get(list.get(i)));
+        }
+        return centroids;
+	}
+	
+	
 	/*
 	 * Method that execute the K-means algorithm
 	 * */
 	public void cluster() {
 		// Select K initial centroids
-		ArrayList<Point> centroids = initializeCentroids();
-        System.out.println("#centroids aleatoires : "+ centroids.toString());
+		ArrayList<Point> centroidsInt = randomCentroids();
+		ArrayList<Point2D> centroids = new ArrayList<Point2D>();
+		for (int i = 0; i < centroidsInt.size(); i++) {
+			centroids.add(new Point2D.Double(centroidsInt.get(i).getX(), centroidsInt.get(i).getY()));
+		}
+      //  System.out.println("#centroids aleatoires : "+ centroids.toString());
         
         // Inital total score
-        Double score = Double.MAX_VALUE;
-        
+        double score = -10000000000.0;
         while(true) {
+        	cleanClusters();
             // For each points
             for(Point point : points){
-                Double distMin = Double.MAX_VALUE;
+                double distMin = 10000000000.0;
+                int index = -1;
                 // find the centroid at a minimum distance from it and add the point to its cluster
                 for(int i = 0; i < centroids.size(); i++){
-                    Double distance = utils.distance(centroids.get(i), point);
+                    double distance = utils.distance(centroids.get(i), new Point2D.Double(point.getX(), point.getY()));
                     if(distance < distMin){
                         distMin = distance;
-                        setCouleur(i, point);
+                        index = i;
                     }
+                }
+                if (index >= 0) {
+                	setCouleur(index, point);
                 }
             }
             
-            System.out.println("## clusters : "+ toStringClusters());
-            
+         //   System.out.println("## clusters : "+ toStringClusters());
             centroids = regenerateCentroids();
-            System.out.println("###nouveaux centroids : "+ centroids.toString());
-            break;
-        }     
+          //  System.out.println("###nouveaux centroids : "+ centroids.toString());
+            double newScore = calculateScore(centroids);
+            if(newScore == score){
+                break;
+            }
+            score = newScore;
+        }
+        System.out.println("fin");
 	}
+	
+    public double calculateScore(ArrayList<Point2D> centroids){
+        double score = 0.0;
+        for(int i=0; i<centroids.size(); i++) {
+            score += calculateScoreOfCluster(centroids.get(i), i);
+        }
+        return score;
+    }
+    
+    public double calculateScoreOfCluster(Point2D centroid, int index){
+        ArrayList<Point> cluster = getCouleur(index);
+        double score = 0.0;
+        for (Point point : cluster) {
+			score += utils.distance(new Point2D.Double(point.getX(), point.getY()), centroid);
+		}
+        return score;
+    }
+	
     /*
      * Method that regenerate the list of centroids based on cluster averages
      * */
-    public  ArrayList<Point> regenerateCentroids(){
-    	ArrayList<Point> centroids = new ArrayList<Point>();
+    public  ArrayList<Point2D> regenerateCentroids(){
+    	ArrayList<Point2D> centroids = new ArrayList<Point2D>();
         for(int i=0; i < this.k; i++){
             centroids.add(generatesCentroid(i));
         }
@@ -88,7 +138,7 @@ public class KMeans2D {
     /*
      * Method that generate the centroid of a given cluster
      * */
-    public Point generatesCentroid(int index){
+    public Point2D generatesCentroid(int index){
         Point centroid = new Point();
 
         ArrayList<Point> pointsInCluster = new ArrayList<Point>();
@@ -100,16 +150,24 @@ public class KMeans2D {
         return centre(pointsInCluster);
     }
     
-    public Point centre(ArrayList<Point> clusters ){
-        int sumX = 0;
-        int sumY = 0;
+    public Point2D centre(ArrayList<Point> clusters ){
+        double sumX = 0;
+        double sumY = 0;
         for(Point cluster : clusters){
                 sumX += cluster.getX();
                 sumY += cluster.getY();
         }
-        return new Point(sumX/clusters.size(), sumY/clusters.size());
+        return new Point2D.Double(sumX/clusters.size(), sumY/clusters.size());
     }
 	
+    private void cleanClusters() {
+    	this.jaune.clear();
+    	this.noir.clear();
+    	this.orange.clear();
+    	this.rouge.clear();
+    	this.verte.clear();
+    }
+    
 	/*
 	 * Method that add a point in the cluster corresponding to his index
 	 * */

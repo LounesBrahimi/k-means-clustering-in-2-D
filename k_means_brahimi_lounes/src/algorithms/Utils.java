@@ -1,6 +1,7 @@
 package algorithms;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -70,6 +71,14 @@ public class Utils {
          * Method that calculate distance euclidiean between two Points
          * */
         public Double distance(Point a, Point b){
+        	return Math.sqrt((b.getX()-a.getX())*(b.getX()-a.getX())
+        						+ (b.getY()-a.getY())*(b.getY()-a.getY()));
+        }
+        
+        /*
+         * Method that calculate distance euclidiean between two Point2D
+         * */
+        public Double distance(Point2D a, Point2D b){
         	return Math.sqrt((b.getX()-a.getX())*(b.getX()-a.getX())
         						+ (b.getY()-a.getY())*(b.getY()-a.getY()));
         }
